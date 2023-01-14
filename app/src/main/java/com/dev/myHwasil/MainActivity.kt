@@ -10,6 +10,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.dev.myHwasil.navigation.SetupNavGraph
 import com.dev.myHwasil.ui.theme.MyHwasilTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,13 +19,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyHwasilTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("main")
-                }
+                val navController = rememberNavController();
+                SetupNavGraph(navController = navController)
             }
         }
     }
