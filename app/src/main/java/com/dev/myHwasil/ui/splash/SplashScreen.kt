@@ -2,9 +2,7 @@ package com.dev.myHwasil.ui.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -40,7 +38,13 @@ fun Splash() {
         contentAlignment = Alignment.Center
     ) {
         val logoImage = painterResource(id = R.drawable.logo);
-        Image(painter = logoImage, contentDescription = null)
+        Image(
+            painter = logoImage,
+            contentDescription = null,
+            modifier = Modifier
+                .width(140.dp)
+                .height(64.dp)
+        )
 
     }
 }
