@@ -1,13 +1,16 @@
 package com.dev.myHwasil.ui.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.dev.myHwasil.R
 
@@ -28,6 +32,10 @@ fun HomeScreen(navController: NavController) {
 
 @Composable
 fun SelectOption() {
+    val (isWomanClicked, setIsWomanClicked) = remember { mutableStateOf(false) }
+    val (isManClicked, setIsManClicked) = remember { mutableStateOf(false) }
+    val (isButtonEnabled, setIsButtonEnabled) = remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -55,18 +63,40 @@ fun SelectOption() {
                         .fillMaxWidth()
                 ) {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            setIsWomanClicked(false); setIsManClicked(true); setIsButtonEnabled(
+                            true
+                        );
+                        },
                     ) {
-                        Image(
+                        if (isManClicked) Image(
+                            modifier = Modifier
+                                .width(140.dp)
+                                .height(140.dp),
+                            painter = painterResource(id = R.drawable.man_clicked),
+                            contentDescription = "man"
+                        ) else Image(
                             modifier = Modifier
                                 .width(140.dp)
                                 .height(140.dp),
                             painter = painterResource(id = R.drawable.man),
                             contentDescription = "man"
                         )
+
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Image(
+                    IconButton(onClick = {
+                        setIsWomanClicked(true); setIsManClicked(false); setIsButtonEnabled(
+                        true
+                    );
+                    }) {
+
+                        if (isWomanClicked) Image(
+                            modifier = Modifier
+                                .width(140.dp)
+                                .height(140.dp),
+                            painter = painterResource(id = R.drawable.girl_clicked),
+                            contentDescription = "girl"
+                        ) else Image(
                             modifier = Modifier
                                 .width(140.dp)
                                 .height(140.dp),
@@ -74,11 +104,13 @@ fun SelectOption() {
                             contentDescription = "girl"
                         )
 
+
                     }
                 };
             }
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.BottomEnd) {
                 Button(
+                    enabled = isButtonEnabled,
                     onClick = { /*TODO*/ },
                     colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.primary)),
                     modifier = Modifier
@@ -94,6 +126,9 @@ fun SelectOption() {
 
         }
     }
+}
 
+
+class HomeViewmodel : ViewModel() {
 
 }
