@@ -23,15 +23,17 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.dev.myHwasil.R
+import com.dev.myHwasil.navigation.Screen
 
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    SelectOption();
+    SelectOption(onNavigateToMap = {  navController.navigate(Screen.Map.route) });
 }
 
 @Composable
-fun SelectOption() {
+fun SelectOption(onNavigateToMap: () -> Unit) {
+
     val (isWomanClicked, setIsWomanClicked) = remember { mutableStateOf(false) }
     val (isManClicked, setIsManClicked) = remember { mutableStateOf(false) }
     val (isButtonEnabled, setIsButtonEnabled) = remember { mutableStateOf(false) }
@@ -111,7 +113,7 @@ fun SelectOption() {
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.BottomEnd) {
                 Button(
                     enabled = isButtonEnabled,
-                    onClick = { /*TODO*/ },
+                    onClick = onNavigateToMap,
                     colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.primary)),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -128,7 +130,3 @@ fun SelectOption() {
     }
 }
 
-
-class HomeViewmodel : ViewModel() {
-
-}
