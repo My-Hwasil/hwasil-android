@@ -64,4 +64,8 @@ dependencies {
 
     // compose navigation
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    // kakao map
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files('libs/libDaumMapAndroid.jar')
 }
