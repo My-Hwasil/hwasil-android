@@ -1,34 +1,35 @@
 package com.dev.myHwasil.ui.home
 
+import android.content.Intent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.dev.myHwasil.R
 import com.dev.myHwasil.navigation.Screen
+import com.dev.myHwasil.ui.map.MapActivity
 
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    SelectOption(onNavigateToMap = {  navController.navigate(Screen.Map.route) });
+    SelectOption(onNavigateToMap = { navController.navigate(Screen.Map.route) });
 }
 
 @Composable
@@ -38,6 +39,7 @@ fun SelectOption(onNavigateToMap: () -> Unit) {
     val (isManClicked, setIsManClicked) = remember { mutableStateOf(false) }
     val (isButtonEnabled, setIsButtonEnabled) = remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -113,7 +115,9 @@ fun SelectOption(onNavigateToMap: () -> Unit) {
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.BottomEnd) {
                 Button(
                     enabled = isButtonEnabled,
-                    onClick = onNavigateToMap,
+                    onClick = {
+                        context.startActivity(Intent(context, MapActivity::class.java))
+                    },
                     colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.primary)),
                     modifier = Modifier
                         .fillMaxWidth()
