@@ -71,4 +71,7 @@ dependencies {
     // kakao map
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation files('libs/libDaumMapAndroid.jar')
+
+    // layout
+    implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
 }

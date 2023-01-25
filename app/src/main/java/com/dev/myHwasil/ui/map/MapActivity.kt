@@ -2,29 +2,61 @@ package com.dev.myHwasil.ui.map
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.dev.myHwasil.R
 import com.dev.myHwasil.data.api.models.TestData
 import com.dev.myHwasil.databinding.ActivityMapBinding
+import com.dev.myHwasil.ui.dialog.ModalBottomSheet
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import net.daum.mf.map.api.*
 import net.daum.mf.map.api.MapPOIItem
 
 
-class MapActivity : ComponentActivity() {
+class MapActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMapBinding
-    private val eventListener = MarkerEventListener(this)  // 마커 클릭 이벤트 리스너
+    private val eventListener = MarkerEventListener(this, onBottomSheetOpen = ::handleBottomSheetOpen)  // 마커 클릭 이벤트 리스너
+    lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>;
 
+    fun handleBottomSheetOpen( item : MapPOIItem?) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        binding.toiletName.setText(item?.itemName)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapBinding.inflate(layoutInflater)
         val view = binding.root
+        setContentView(view)
 
         val mapView = MapView(this)
         binding.mapView.addView(mapView)
-        setContentView(view)
+
+        // bottom sheet
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+
+        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                // 상태가 변함에 따라서 할일들을 적어줍니다.
+//                if (newState == STATE_EXPANDED) {
+//                    // TODO; 내용을 보여주기 위해 fragment 붙이기...
+//                }
+            }
+
+            override fun onSlide(bottomSheetView: View, slideOffset: Float) {
+                // slideOffset 접힘 -> 펼쳐짐: 0.0 ~ 1.0
+                if (slideOffset >= 0) {
+                    // 화살표는 완전히 펼치면 180도 돌아가게
+                    binding.guideline1.rotation =  (1-slideOffset) * 180F
+                }
+            }
+        })
 
 
         // 마커 클릭 이벤트 리스너 등록
@@ -35,7 +67,7 @@ class MapActivity : ComponentActivity() {
         // 줌 아웃
         mapView.zoomOut(true);
         val mapPoint = MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633)
-        mapView.setMapCenterPointAndZoomLevel(mapPoint, 4, true);
+        mapView.setMapCenterPointAndZoomLevel(mapPoint, 2, true);
 
         // 마커 생성
         val marker = MapPOIItem()
@@ -44,6 +76,7 @@ class MapActivity : ComponentActivity() {
         marker.markerType = MapPOIItem.MarkerType.CustomImage
         marker.customImageResourceId = R.drawable.marker // 마커 이미지.
         marker.isCustomImageAutoscale = false
+        marker.isShowCalloutBalloonOnTouch = false
         marker.setCustomImageAnchor(0.5f, 1.0f);
         mapView.addPOIItem(marker)
 
@@ -63,6 +96,7 @@ class MapActivity : ComponentActivity() {
             marker.markerType = MapPOIItem.MarkerType.CustomImage
             marker.customImageResourceId = R.drawable.toilet_marker
             marker.isCustomImageAutoscale = false
+            marker.isShowCalloutBalloonOnTouch = false
             markerArr.add(marker)
         }
 
@@ -72,13 +106,12 @@ class MapActivity : ComponentActivity() {
 
 
     // 마커 클릭 이벤트 리스너
-    class MarkerEventListener(val context: Context) : MapView.POIItemEventListener {
+    class MarkerEventListener(val context: Context, val onBottomSheetOpen: (poiItem :MapPOIItem?) -> Unit) :
+        MapView.POIItemEventListener {
 
         override fun onPOIItemSelected(mapView: MapView?, poiItem: MapPOIItem?) {
-
             // 마커 클릭 시
-            Toast.makeText(context, "${poiItem?.itemName}", Toast.LENGTH_SHORT).show()
-
+            onBottomSheetOpen(poiItem);
         }
 
         override fun onCalloutBalloonOfPOIItemTouched(mapView: MapView?, poiItem: MapPOIItem?) {
@@ -101,4 +134,6 @@ class MapActivity : ComponentActivity() {
             // 마커의 속성 중 isDraggable = true 일 때 마커를 이동시켰을 경우
         }
     }
+
+
 }
