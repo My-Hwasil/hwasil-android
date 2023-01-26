@@ -18,11 +18,13 @@ import net.daum.mf.map.api.MapPOIItem
 
 class MapActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMapBinding
-    private val eventListener = MarkerEventListener(this, onBottomSheetOpen = ::handleBottomSheetOpen)  // 마커 클릭 이벤트 리스너
+    private val eventListener =
+        MarkerEventListener(this, onBottomSheetOpen = ::handleBottomSheetOpen)  // 마커 클릭 이벤트 리스너
     lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>;
 
-    fun handleBottomSheetOpen( item : MapPOIItem?) {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    fun handleBottomSheetOpen(item: MapPOIItem?) {
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         binding.toiletName.setText(item?.itemName)
     }
 
@@ -41,7 +43,8 @@ class MapActivity : AppCompatActivity() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
 
-        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 // 상태가 변함에 따라서 할일들을 적어줍니다.
 //                if (newState == STATE_EXPANDED) {
@@ -53,7 +56,7 @@ class MapActivity : AppCompatActivity() {
                 // slideOffset 접힘 -> 펼쳐짐: 0.0 ~ 1.0
                 if (slideOffset >= 0) {
                     // 화살표는 완전히 펼치면 180도 돌아가게
-                    binding.guideline1.rotation =  (1-slideOffset) * 180F
+                    binding.guideline1.rotation = (1 - slideOffset) * 180F
                 }
             }
         })
@@ -103,37 +106,5 @@ class MapActivity : AppCompatActivity() {
         mapView.addPOIItems(markerArr.toArray(arrayOfNulls(markerArr.size)))
 
     }
-
-
-    // 마커 클릭 이벤트 리스너
-    class MarkerEventListener(val context: Context, val onBottomSheetOpen: (poiItem :MapPOIItem?) -> Unit) :
-        MapView.POIItemEventListener {
-
-        override fun onPOIItemSelected(mapView: MapView?, poiItem: MapPOIItem?) {
-            // 마커 클릭 시
-            onBottomSheetOpen(poiItem);
-        }
-
-        override fun onCalloutBalloonOfPOIItemTouched(mapView: MapView?, poiItem: MapPOIItem?) {
-            // 말풍선 클릭 시 (Deprecated). 밑 함수에 작성
-        }
-
-        override fun onCalloutBalloonOfPOIItemTouched(
-            mapView: MapView?,
-            poiItem: MapPOIItem?,
-            buttonType: MapPOIItem.CalloutBalloonButtonType?
-        ) {
-            // 말풍선 클릭 시
-        }
-
-        override fun onDraggablePOIItemMoved(
-            mapView: MapView?,
-            poiItem: MapPOIItem?,
-            mapPoint: MapPoint?
-        ) {
-            // 마커의 속성 중 isDraggable = true 일 때 마커를 이동시켰을 경우
-        }
-    }
-
 
 }
