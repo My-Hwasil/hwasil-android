@@ -9,6 +9,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:theme="@style/BottomAppBarOverlay"
+        app:backgroundTint="@color/white"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetEnd="01dp"
+        app:fabAlignmentMode="center"
+        app:fabCradleMargin="8dp"
+        app:fabCradleRoundedCornerRadius="24dp"
+        app:menu="@menu/bottom_bar_menu_right">
+        <androidx.appcompat.widget.ActionMenuView
+            android:id="@+id/menu_view"
+            android:layout_width="wrap_content"
+            android:layout_height="?actionBarSize" />
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        style="@style/Widget.App.FloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_compass"
+        app:backgroundTint="@color/primary"
+        app:layout_anchor="@id/bottomAppBar" />
     <LinearLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
@@ -254,8 +282,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginTop="20dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/rounded_corner_button">
+                    android:background="@drawable/rounded_corner_button"
+                    android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:layout_width="0dp"
@@ -264,6 +292,7 @@
                         android:background="@android:color/transparent"
                         android:text="위치공유"
                         android:textColor="@color/white" />
+
                     <Button
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -275,4 +304,5 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

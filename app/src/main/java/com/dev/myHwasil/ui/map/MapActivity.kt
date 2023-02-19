@@ -31,8 +31,13 @@ class MapActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        // map view binding
         val mapView = MapView(this)
         binding.mapView.addView(mapView)
+
+        // bottom bar binding
+        val actionMenuView = binding.menuView;
+        menuInflater.inflate(R.menu.bottom_bar_menu_left, actionMenuView.menu)
 
         // bottom sheet
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
