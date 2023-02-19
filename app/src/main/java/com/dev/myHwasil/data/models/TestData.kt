@@ -1,4 +1,4 @@
-package com.dev.myHwasil.data.api.models
+package com.dev.myHwasil.data.models
 
 data class TestData(
     var name: String,

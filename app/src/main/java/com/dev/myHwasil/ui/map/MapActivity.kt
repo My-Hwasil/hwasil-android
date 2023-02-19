@@ -1,17 +1,13 @@
 package com.dev.myHwasil.ui.map
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.dev.myHwasil.R
-import com.dev.myHwasil.data.api.models.TestData
+import com.dev.myHwasil.data.models.TestData
 import com.dev.myHwasil.databinding.ActivityMapBinding
-import com.dev.myHwasil.ui.dialog.ModalBottomSheet
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import net.daum.mf.map.api.*
 import net.daum.mf.map.api.MapPOIItem
 
