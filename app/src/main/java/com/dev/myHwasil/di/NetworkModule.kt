@@ -1,19 +1,21 @@
 package com.dev.myHwasil.di
 
+import com.dev.myHwasil.data.data_source.RemoteDataSource
 import com.dev.myHwasil.data.toilet.api.ToiletApi
-import com.dev.myHwasil.data.toilet.repository.ToiletRepository
-import com.dev.myHwasil.data.toilet.repository.ToiletRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import retrofit2.create
 
 @InstallIn(SingletonComponent::class)
 @Module
-object RepositoryModule {
+object NetworkModule {
+    private val dataSource
+        get() = RemoteDataSource.client
+
     @Singleton
     @Provides
-    fun provideToiletRepository(service: ToiletApi): ToiletRepository =
-        ToiletRepositoryImpl(service)
+    fun provideToiletApi() = dataSource.create<ToiletApi>()
 }

@@ -1,0 +1,30 @@
+package com.dev.myHwasil.data.toilet.dto
+
+data class ToiletInfoDto(
+    val dipersExchgPosi: String,
+    val emgBellYn: String,
+    val enterentCctvYn: String,
+    val installationYear: String,
+    val institutionNm: String,
+    val insttCode: String,
+    val ladiesChildrenToiletBowlNumber: String,
+    val ladiesHandicapToiletBowlNumber: String,
+    val ladiesToiletBowlNumber: String,
+    val latitude: String,
+    val lnmadr: String,
+    val longitude: String,
+    val menChildrenToiletBowlNumber: String,
+    val menChildrenUrinalNumber: String,
+    val menHandicapToiletBowlNumber: String,
+    val menHandicapUrinalNumber: String,
+    val menToiletBowlNumber: String,
+    val menUrineNumber: String,
+    val openTime: String,
+    val phoneNumber: String,
+    val rdnmadr: String,
+    val referenceDate: String,
+    val toiletNm: String,
+    val toiletNo: Int,
+    val toiletTycd: String,
+    val unisexToiletYn: String
+)

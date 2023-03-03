@@ -1,6 +1,7 @@
 package com.dev.myHwasil.ui.home
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,8 +34,9 @@ fun HomeScreen(navController: NavController) {
 }
 
 @Composable
-fun SelectOption(onNavigateToMap: () -> Unit) {
-
+fun SelectOption(
+    onNavigateToMap: () -> Unit,
+) {
     val (isWomanClicked, setIsWomanClicked) = remember { mutableStateOf(false) }
     val (isManClicked, setIsManClicked) = remember { mutableStateOf(false) }
     val (isButtonEnabled, setIsButtonEnabled) = remember { mutableStateOf(false) }
@@ -133,4 +135,3 @@ fun SelectOption(onNavigateToMap: () -> Unit) {
         }
     }
 }
-

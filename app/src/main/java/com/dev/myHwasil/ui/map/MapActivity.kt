@@ -1,48 +1,124 @@
 package com.dev.myHwasil.ui.map
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.dev.myHwasil.R
-import com.dev.myHwasil.data.models.TestData
+import com.dev.myHwasil.common.result.Results
 import com.dev.myHwasil.databinding.ActivityMapBinding
+import com.dev.myHwasil.ui.map.MapActivityViewModel
+import com.dev.myHwasil.ui.map.MarkerEventListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import net.daum.mf.map.api.*
 import net.daum.mf.map.api.MapPOIItem
 
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
+    private val vm by viewModels<MapActivityViewModel>()
+
     private lateinit var binding: ActivityMapBinding
     private val eventListener =
-        MarkerEventListener(this, onBottomSheetOpen = ::handleBottomSheetOpen)  // 마커 클릭 이벤트 리스너
+        MarkerEventListener(
+            this,
+            onBottomSheetOpen = ::handleBottomSheetOpen
+        )  // 마커 클릭 이벤트 리스너
+
     lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>;
-
-    fun handleBottomSheetOpen(item: MapPOIItem?) {
-
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        binding.toiletName.setText(item?.itemName)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        // map view binding
-        val mapView = MapView(this)
-        binding.mapView.addView(mapView)
+        val mapView = initMapView()
+        initActionMenuView()
+        initBottomSheet()
 
-        // bottom bar binding
+        // ####### 화장실 정보 불러오기 #######
+        vm.fetchToiletInfoByAddress(address = "영등포구")
+
+        // ######## 불러온 화장실 데이터로 마커 찍기 ############
+        lifecycleScope.launch {
+            vm.toiletsFlow.collect {
+                when (it) {
+                    is Results.Error -> {
+                        Log.d("ddd", "onCreate: error ${it.exception}")
+                    }
+
+                    is Results.Loading -> {
+                        Log.d("ddd", "onCreate: loading")
+                    }
+
+                    is Results.Success -> {
+                        Log.d("ddd", "onCreate: success ${it.data}")
+
+                        it.data.map { toilet ->
+                            createMarker(
+                                toilet.title,
+                                toilet.latitude,
+                                toilet.longitude
+                            )
+                        }.let { markers ->
+                            mapView.addPOIItems(markers.toTypedArray());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initMapView(): MapView {
+        val defaultMapPoint =MapPoint.mapPointWithGeoCoord(
+            37.516168,
+            126.915405
+        )
+
+        return MapView(this)
+            .apply {
+                setPOIItemEventListener(eventListener)
+                zoomIn(true)
+                zoomOut(true)
+                setMapCenterPointAndZoomLevel(
+                    defaultMapPoint,
+                    2,
+                    true
+                )
+            }.apply {
+                addPOIItem(
+                    MapPOIItem().apply {
+                        itemName = ""
+                        mapPoint = defaultMapPoint
+                        markerType = MapPOIItem.MarkerType.CustomImage
+                        customImageResourceId = R.drawable.marker // 마커 이미지.
+                        isCustomImageAutoscale = false
+                        isShowCalloutBalloonOnTouch = false
+                        setCustomImageAnchor(
+                            0.5f,
+                            1.0f
+                        )
+                    }
+                )
+            }.also {
+                binding.mapView.addView(it)
+            }
+    }
+
+    private fun initActionMenuView() {
         val actionMenuView = binding.menuView;
         menuInflater.inflate(R.menu.bottom_bar_menu_left, actionMenuView.menu)
+    }
 
-        // bottom sheet
+    private fun initBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
 
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -61,51 +137,26 @@ class MapActivity : AppCompatActivity() {
                 }
             }
         })
+    }
 
+    private fun createMarker(toiletName: String, latitude: Double, longitude: Double): MapPOIItem {
+        return MapPOIItem()
+            .apply {
+                mapPoint = MapPoint.mapPointWithGeoCoord(
+                    latitude,
+                    longitude
+                )
+                itemName = toiletName
+                markerType = MapPOIItem.MarkerType.CustomImage
+                customImageResourceId = R.drawable.toilet_marker
+                isCustomImageAutoscale = false
+                isShowCalloutBalloonOnTouch = false
+            }
+    }
 
-        // 마커 클릭 이벤트 리스너 등록
-        mapView.setPOIItemEventListener(eventListener)
-
-        // 줌 인
-        mapView.zoomIn(true);
-        // 줌 아웃
-        mapView.zoomOut(true);
-        val mapPoint = MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633)
-        mapView.setMapCenterPointAndZoomLevel(mapPoint, 2, true);
-
-        // 마커 생성
-        val marker = MapPOIItem()
-        marker.itemName = ""
-        marker.mapPoint = mapPoint
-        marker.markerType = MapPOIItem.MarkerType.CustomImage
-        marker.customImageResourceId = R.drawable.marker // 마커 이미지.
-        marker.isCustomImageAutoscale = false
-        marker.isShowCalloutBalloonOnTouch = false
-        marker.setCustomImageAnchor(0.5f, 1.0f);
-        mapView.addPOIItem(marker)
-
-
-        var dataArr = listOf<TestData>(
-            TestData("서울방송고등학교 화장실", 37.54717402268097, 127.01035369951688),
-            TestData("한남더힐 아파트 화장실", 37.5373753, 127.005578),
-            TestData("미얀마 대사관 화장실", 37.54005668980562, 127.00269614863929),
-        )
-
-
-        val markerArr = ArrayList<MapPOIItem>()
-        for (data in dataArr) {
-            val marker = MapPOIItem()
-            marker.mapPoint = MapPoint.mapPointWithGeoCoord(data.latitude, data.longitude)
-            marker.itemName = data.name
-            marker.markerType = MapPOIItem.MarkerType.CustomImage
-            marker.customImageResourceId = R.drawable.toilet_marker
-            marker.isCustomImageAutoscale = false
-            marker.isShowCalloutBalloonOnTouch = false
-            markerArr.add(marker)
-        }
-
-        mapView.addPOIItems(markerArr.toArray(arrayOfNulls(markerArr.size)))
-
+    private fun handleBottomSheetOpen(item: MapPOIItem?) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        binding.toiletName.text = item?.itemName
     }
 
 }
